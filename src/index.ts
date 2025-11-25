@@ -1,0 +1,49 @@
+import { Hono } from "hono";
+import env from "./config/env";
+import apiV1Routes from "@/api/v1";
+import { connectDB } from "@/db/connection";
+import { logger } from "@/lib/logger";
+import { serve } from "@hono/node-server";
+import { cors } from "hono/cors";
+import type { Server as HTTPServer } from "node:http";
+import { Server } from "socket.io";
+
+const app = new Hono();
+
+app.use(cors({ origin: "*" }));
+
+app.get("/health", (c) => {
+  return c.json({
+    message: "Server is up and running!!",
+  });
+});
+app.route("/", apiV1Routes);
+
+// Start server
+async function start() {
+  try {
+    await connectDB();
+    const port = env.PORT;
+    logger.info(`Server running on port ${port}`, {
+      module: "system",
+      action: "startup",
+    });
+  } catch (error) {
+    logger.error("Failed to start server", {
+      module: "system",
+      action: "startup",
+      error: error,
+    });
+    process.exit(1);
+  }
+}
+
+void start();
+const httpServer = serve({
+  fetch: app.fetch,
+  port: +env.PORT,
+});
+
+const io = new Server(httpServer as HTTPServer);
+
+export { io };
