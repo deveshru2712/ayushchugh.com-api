@@ -5,8 +5,6 @@ import { connectDB } from "@/db/connection";
 import { logger } from "@/lib/logger";
 import { serve } from "@hono/node-server";
 import { cors } from "hono/cors";
-import type { Server as HTTPServer } from "node:http";
-import { Server } from "socket.io";
 
 const app = new Hono();
 
@@ -39,11 +37,7 @@ async function start() {
 }
 
 void start();
-const httpServer = serve({
+serve({
   fetch: app.fetch,
   port: +env.PORT,
 });
-
-const io = new Server(httpServer as HTTPServer);
-
-export { io };

@@ -37,9 +37,6 @@ const userSchema = new Schema(
   },
 );
 
-// index
-userSchema.index({ email: 1 });
-
 export type UserRaw = InferSchemaType<typeof userSchema> & {
   _id: mongoose.Types.ObjectId;
   createdAt: Date;
