@@ -8,7 +8,13 @@ import { cors } from "hono/cors";
 
 const app = new Hono();
 
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  }),
+);
 
 app.get("/health", (c) => {
   return c.json({

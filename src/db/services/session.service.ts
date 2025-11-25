@@ -37,7 +37,7 @@ export namespace SessionService {
    */
   export async function findById(id: string): Promise<Session> {
     try {
-      const session = await SessionModel.findById({ id });
+      const session = await SessionModel.findById(id);
       return session;
     } catch (err) {
       logger.error("Error finding session by id", {

@@ -79,7 +79,6 @@ export namespace TokenService {
   /**
    * Refresh access token using refresh token
    * @param sessionId - Session ID
-   * @param options - Optional database transaction
    * @returns New access token and expiration
    */
   export async function refreshAccessToken(sessionId: string): Promise<TokenRefreshResult> {
