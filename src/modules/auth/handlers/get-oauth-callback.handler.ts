@@ -147,17 +147,17 @@ export const getOauthCallbackHandler = factory.createHandlers(
         module: "auth",
         action: "oauth:authentication:success",
         provider,
-        userId: user.id,
+        userId: user._id,
         email: user.email,
         providerAccountId: user.providerAccountId,
-        sessionId: session.id,
+        sessionId: session._id,
       });
 
       // Generate server JWT tokens
       const serverAccessToken = signJwt(
         {
-          userId: user.id,
-          sessionId: session.id,
+          userId: user._id,
+          sessionId: session._id,
         },
         {
           expiresIn: "1h",
@@ -166,8 +166,8 @@ export const getOauthCallbackHandler = factory.createHandlers(
 
       const serverRefreshToken = signJwt(
         {
-          userId: user.id,
-          sessionId: session.id,
+          userId: user._id,
+          sessionId: session._id,
         },
         {
           expiresIn: "90d",

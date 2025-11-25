@@ -7,7 +7,7 @@ export namespace UsersService {
    * Creates a new user in the database
    * @param payload - The new user's data'
    */
-  export async function create(payload: NewUser): Promise<NewUser> {
+  export async function create(payload: NewUser): Promise<User> {
     try {
       const user = await UserModel.insertOne(payload);
 
