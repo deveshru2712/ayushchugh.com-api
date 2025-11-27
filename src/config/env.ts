@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const envSchema = z.object({
   DATABASE_URL: z.string({ message: "DATABASE_URL is required" }),
+  FRONTEND_URL: z.string({ message: "FRONTEND_URL is required" }),
   PORT: z.string({ message: "PORT is required" }).optional().default("8000"),
   NODE_ENV: z
     .enum(["development", "staging", "production"], { message: "NODE_ENV is required" })
@@ -27,6 +28,7 @@ const envSchema = z.object({
 
 const env = envSchema.parse({
   DATABASE_URL: process.env.DATABASE_URL,
+  FRONTEND_URL: process.env.FRONTEND_URL,
   PORT: process.env.PORT,
   NODE_ENV: process.env.NODE_ENV,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,

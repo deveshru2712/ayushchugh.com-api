@@ -135,19 +135,6 @@ export namespace TokenService {
       const accessTokenExpiresIn = tokenResponse.expires_in || 3600; // Default 1 hour
       const accessTokenExpiresAt = new Date(Date.now() + accessTokenExpiresIn * 1000);
 
-      // Update session with new access token
-
-      await SessionModel.findByIdAndUpdate(session._id, {
-        providerAccessToken: encryptedAccessToken,
-        providerAccessTokenIv: accessTokenIv,
-        providerAccessTokenTag: accessTokenTag,
-        providerAccessTokenExpiresAt: accessTokenExpiresAt,
-        lastAccessedAt: new Date(),
-        // update scope if provided
-        providerScope: tokenResponse.scope,
-        // update refresh token if provider returned a new one
-      });
-
       const payload: UpdateSession = {};
 
       if (tokenResponse.scope) {
@@ -178,7 +165,8 @@ export namespace TokenService {
       payload.lastAccessedAt = new Date();
       payload.updatedAt = new Date();
 
-      await SessionModel.findByIdAndUpdate({ _id: session._id }, payload);
+      // Update session with new access token
+      await SessionModel.findByIdAndUpdate(session._id, payload);
 
       logger.audit("Access token refreshed successfully", {
         module: "auth",
@@ -190,9 +178,7 @@ export namespace TokenService {
         accessToken: tokenResponse.access_token,
         accessTokenExpiresAt,
         refreshToken: tokenResponse.refresh_token,
-        refreshTokenExpiresAt: tokenResponse.refresh_token
-          ? new Date(Date.now() + (tokenResponse.expires_in || 90 * 24 * 60 * 60) * 1000)
-          : undefined,
+        refreshTokenExpiresAt: payload.providerRefreshTokenExpiresAt,
       };
     } catch (err) {
       logger.error("Error refreshing access token", {
@@ -209,7 +195,7 @@ export namespace TokenService {
       payload.revokedAt = new Date();
       payload.updatedAt = new Date();
 
-      await SessionModel.findByIdAndUpdate({ _id: session._id }, payload);
+      await SessionModel.findByIdAndUpdate(session._id, payload);
 
       throw err;
     }
