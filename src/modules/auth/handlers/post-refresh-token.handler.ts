@@ -5,6 +5,7 @@ import { TokenService } from "../services";
 import { logger } from "@/lib/logger";
 import { getCookie, setCookie } from "hono/cookie";
 import { verifyJwt } from "@/lib/jwt";
+import env from "@/config/env";
 
 export const postRefreshTokenHandler = factory.createHandlers(async (c) => {
   try {
@@ -42,7 +43,7 @@ export const postRefreshTokenHandler = factory.createHandlers(async (c) => {
     // setting the accesstoken
     setCookie(c, "accessToken", result.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: env.NODE_ENV === "production",
       sameSite: "Lax",
       maxAge: 60 * 60,
       path: "/",
@@ -51,7 +52,7 @@ export const postRefreshTokenHandler = factory.createHandlers(async (c) => {
     if (result.refreshToken) {
       setCookie(c, "refreshToken", result.refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
         sameSite: "Lax",
         maxAge: 60 * 60 * 24 * 90,
         path: "/",
@@ -73,9 +74,9 @@ export const postRefreshTokenHandler = factory.createHandlers(async (c) => {
       error: err instanceof Error ? err.message : String(err),
     });
 
-    // Check for specific error messages
-    if (err instanceof Error) {
-      if (err.message.includes("Session not found")) {
+    // Check for specific error status codes
+    if (err instanceof HTTPException) {
+      if (err.status === StatusCodes.HTTP_404_NOT_FOUND) {
         throw new HTTPException(StatusCodes.HTTP_404_NOT_FOUND, {
           message: "Session not found",
           res: c.json({
@@ -84,7 +85,7 @@ export const postRefreshTokenHandler = factory.createHandlers(async (c) => {
         });
       }
 
-      if (err.message.includes("Refresh token expired") || err.message.includes("not active")) {
+      if (err.status === StatusCodes.HTTP_401_UNAUTHORIZED) {
         throw new HTTPException(StatusCodes.HTTP_401_UNAUTHORIZED, {
           message: "Session expired. Please re-authenticate.",
           res: c.json({

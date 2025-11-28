@@ -178,7 +178,7 @@ export const getOauthCallbackHandler = factory.createHandlers(
 
       setCookie(c, "accessToken", serverAccessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
         sameSite: "Lax",
         maxAge: 60 * 60,
         path: "/",
@@ -186,7 +186,7 @@ export const getOauthCallbackHandler = factory.createHandlers(
 
       setCookie(c, "refreshToken", serverRefreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
         sameSite: "Lax",
         maxAge: 60 * 60 * 24 * 90,
         path: "/",
