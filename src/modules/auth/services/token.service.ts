@@ -1,9 +1,11 @@
 import { SessionService } from "@/db/services/session.service";
 import { SessionModel, SessionStatus } from "@/db/schema";
+import type { Session } from "@/db/schema";
 import type { UpdateSession } from "@/db/schema";
 import { oauthProviderFactory } from "@/modules/auth/providers";
 import { encrypt, decrypt } from "@/lib/encryption";
 import { logger } from "@/lib/logger";
+import { signJwt } from "@/lib/jwt";
 
 export interface TokenRefreshResult {
   accessToken: string;
@@ -82,7 +84,7 @@ export namespace TokenService {
    * @returns New access token and expiration
    */
   export async function refreshAccessToken(sessionId: string): Promise<TokenRefreshResult> {
-    const session = await SessionService.findById(sessionId);
+    const session: Session = await SessionService.findById(sessionId);
 
     if (!session) {
       throw new Error("Session not found");
@@ -174,8 +176,18 @@ export namespace TokenService {
         sessionId,
       });
 
+      const accessToken = signJwt(
+        {
+          userId: session.userId,
+          sessionId: session._id,
+        },
+        {
+          expiresIn: "1h",
+        },
+      );
+
       return {
-        accessToken: tokenResponse.access_token,
+        accessToken: accessToken,
         accessTokenExpiresAt,
         refreshToken: tokenResponse.refresh_token,
         refreshTokenExpiresAt: payload.providerRefreshTokenExpiresAt,

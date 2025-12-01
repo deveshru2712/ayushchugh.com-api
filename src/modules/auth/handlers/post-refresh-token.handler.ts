@@ -12,7 +12,7 @@ export const postRefreshTokenHandler = factory.createHandlers(async (c) => {
     const refreshToken = getCookie(c, "refreshToken");
 
     if (!refreshToken) {
-      throw new HTTPException(StatusCodes.HTTP_401_UNAUTHORIZED, {
+      throw new HTTPException(StatusCodes.HTTP_403_FORBIDDEN, {
         message: "Refresh token not provided",
       });
     }

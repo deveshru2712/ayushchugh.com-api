@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { getOauthHandler } from "@/modules/auth/handlers/get-oauth.handler";
 import { getOauthCallbackHandler } from "@/modules/auth/handlers/get-oauth-callback.handler";
 import { postRefreshTokenHandler } from "@/modules/auth/handlers/post-refresh-token.handler";
+import { verifySessionHandler } from "@/modules/auth/handlers/get-verify-session.handler";
 
 const authRoutes = new Hono();
 
@@ -12,5 +13,8 @@ authRoutes.get("/oauth/:provider/callback", ...getOauthCallbackHandler);
 
 // Token refresh endpoint
 authRoutes.post("/oauth/refresh", ...postRefreshTokenHandler);
+
+// verify route
+authRoutes.get("/verify-session", ...verifySessionHandler);
 
 export default authRoutes;

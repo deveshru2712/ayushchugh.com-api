@@ -1,6 +1,15 @@
 import winston from "winston";
 
-type LoggerModules = "db" | "auth" | "users" | "system" | "session" | "security";
+type LoggerModules =
+  | "db"
+  | "auth"
+  | "users"
+  | "system"
+  | "session"
+  | "security"
+  | "blogs"
+  | "experience"
+  | "projects";
 
 interface LoggerMeta {
   module: LoggerModules;
