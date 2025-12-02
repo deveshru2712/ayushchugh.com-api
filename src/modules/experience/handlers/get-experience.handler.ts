@@ -6,11 +6,11 @@ import { HTTPException } from "hono/http-exception";
 
 export const getAllExperiences = factory.createHandlers(async (c) => {
   try {
-    const res = await ExperienceModel.find();
+    const experiences = await ExperienceModel.find();
     return c.json(
       {
         message: "Fetched experiences  successfully",
-        data: res,
+        experiences,
       },
       StatusCodes.HTTP_201_CREATED,
     );

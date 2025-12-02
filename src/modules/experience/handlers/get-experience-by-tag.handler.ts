@@ -17,14 +17,14 @@ export const getExperienceByTag = factory.createHandlers(
   async (c) => {
     try {
       const { tag } = c.req.valid("param");
-      const res = await ExperienceModel.find({ experienceType: tag });
+      const experiences = await ExperienceModel.find({ experienceType: tag });
 
       return c.json(
         {
           message: "Fetched experiences by tag successfully",
-          data: res,
+          experiences,
         },
-        StatusCodes.HTTP_201_CREATED,
+        StatusCodes.HTTP_200_OK,
       );
     } catch (err) {
       if (err instanceof HTTPException) {
