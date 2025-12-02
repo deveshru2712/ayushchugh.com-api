@@ -3,6 +3,7 @@ import { createProject } from "@/modules/projects/handler/post-create-project.ha
 import { getAllProjects } from "@/modules/projects/handler/get-project.handler";
 import { authValidator } from "@/middlewares/enforce-auth.middleware";
 import { updateProjectById } from "@/modules/projects/handler/patch-project.handler";
+import { getProjectById } from "@/modules/projects/handler/get-project-by-id.handler";
 
 const projectsRoutes = new Hono();
 
@@ -10,6 +11,8 @@ const projectsRoutes = new Hono();
 projectsRoutes.post("/create", authValidator, ...createProject);
 // fetch all projects
 projectsRoutes.get("/list", ...getAllProjects);
+// fetch projects by id
+projectsRoutes.get("/:id", ...getProjectById);
 //update projects by id
 projectsRoutes.patch("/update/:id", authValidator, ...updateProjectById);
 
