@@ -9,6 +9,6 @@ const apiV1Routes = new Hono();
 apiV1Routes.route("/v1/auth", authRoutes);
 apiV1Routes.route("/v1/blog", blogRoutes);
 apiV1Routes.route("/v1/experience", experienceRoutes);
-apiV1Routes.route("/v1/projects", projectsRoutes);
+apiV1Routes.route("/v1/project", projectsRoutes);
 
 export default apiV1Routes;
