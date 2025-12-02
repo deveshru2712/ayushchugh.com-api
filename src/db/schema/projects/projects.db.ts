@@ -25,6 +25,10 @@ const projectSchema = new Schema({
     type: [String],
     default: [],
   },
+  type: {
+    type: String,
+    required: true,
+  },
 });
 
 export type ProjectsSchemaType = InferSchemaType<typeof projectSchema>;
