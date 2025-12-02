@@ -11,6 +11,6 @@ projectsRoutes.post("/create", authValidator, ...createProject);
 // fetch all projects
 projectsRoutes.get("/list", ...getAllProjects);
 //update projects by id
-projectsRoutes.patch("/update/:id", ...updateProjectById);
+projectsRoutes.patch("/update/:id", authValidator, ...updateProjectById);
 
 export default projectsRoutes;

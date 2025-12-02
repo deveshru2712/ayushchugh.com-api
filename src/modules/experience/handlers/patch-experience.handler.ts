@@ -5,8 +5,7 @@ import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
-
-export const ZodExperienceType = z.enum(["work", "education", "volunteering"]);
+import { ZodExperienceType } from "@/modules/experience/handlers/post-add-experience.handler";
 
 export const updateExperienceById = factory.createHandlers(
   customZValidator("param", z.object({ id: z.string() })),

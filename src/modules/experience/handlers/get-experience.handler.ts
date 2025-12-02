@@ -26,7 +26,7 @@ export const getAllExperiences = factory.createHandlers(async (c) => {
     });
 
     throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
-      message: "Failed to create experience",
+      message: "Failed to fetch experiences",
     });
   }
 });
