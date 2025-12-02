@@ -15,7 +15,7 @@ blogRoutes.get("/list", ...getAllBlogs);
 // get a specific blog by id
 blogRoutes.get("/:id", ...getBlogById);
 // delete blog by specific id
-blogRoutes.delete("/:id", ...deleteBlogById);
+blogRoutes.delete("/:id", authValidator, ...deleteBlogById);
 // update blog by id
 blogRoutes.patch("/update/:id", authValidator, ...updateBlogById);
 

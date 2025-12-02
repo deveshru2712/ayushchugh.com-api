@@ -15,7 +15,7 @@ projectsRoutes.get("/list", ...getAllProjects);
 // fetch projects by id
 projectsRoutes.get("/:id", ...getProjectById);
 // delete projects by id
-projectsRoutes.delete("/:id", ...deleteProjectById);
+projectsRoutes.delete("/:id", authValidator, ...deleteProjectById);
 //update projects by id
 projectsRoutes.patch("/update/:id", authValidator, ...updateProjectById);
 

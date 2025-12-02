@@ -18,7 +18,7 @@ experienceRoutes.get("/:id", ...getExperienceById);
 // get experiences by tag
 experienceRoutes.get("/:tag", ...getExperienceByTag);
 // delete experience by id
-experienceRoutes.delete("/:id", ...deleteExperienceById);
+experienceRoutes.delete("/:id", authValidator, ...deleteExperienceById);
 //update experiences by id
 experienceRoutes.patch("/update/:id", authValidator, ...updateExperienceById);
 
