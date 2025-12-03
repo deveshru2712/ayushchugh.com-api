@@ -25,7 +25,8 @@ export const updateProjectById = factory.createHandlers(
           .optional(),
         techStack: z.array(z.string()).optional(),
         link: z.string().optional(),
-        type: z.string().optional(),
+        workType: z.string().optional(),
+        category: z.string().optional(),
       })
       .refine(
         (data) => {
@@ -36,7 +37,8 @@ export const updateProjectById = factory.createHandlers(
             data.link,
             data.logo,
             data.techStack,
-            data.type,
+            data.workType,
+            data.category,
           ];
 
           return meaningfulFields.some((v) => v !== undefined && v !== null);
@@ -49,7 +51,7 @@ export const updateProjectById = factory.createHandlers(
   async (c) => {
     try {
       const { id } = c.req.valid("param");
-      const { title, description, link, logo, techStack, type } = c.req.valid("json");
+      const { title, description, link, logo, techStack, category, workType } = c.req.valid("json");
 
       const project = await ProjectModel.findById(id);
       if (!project) {
@@ -64,7 +66,8 @@ export const updateProjectById = factory.createHandlers(
         link: string;
         logo: string;
         techStack: string[];
-        type: string;
+        workType: string;
+        category: string;
       }> = {};
 
       if (title) updateFields.title = title;
@@ -72,7 +75,8 @@ export const updateProjectById = factory.createHandlers(
       if (link) updateFields.link = link;
       if (logo) updateFields.logo = logo;
       if (techStack) updateFields.techStack = techStack;
-      if (type) updateFields.type = type;
+      if (workType) updateFields.workType = workType;
+      if (category) updateFields.category = category;
 
       const res = await ProjectModel.findByIdAndUpdate({ _id: id }, updateFields, {
         new: true,

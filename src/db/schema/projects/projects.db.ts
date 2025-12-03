@@ -25,7 +25,11 @@ const projectSchema = new Schema({
     type: [String],
     default: [],
   },
-  type: {
+  workType: {
+    type: String,
+    required: true,
+  },
+  category: {
     type: String,
     required: true,
   },

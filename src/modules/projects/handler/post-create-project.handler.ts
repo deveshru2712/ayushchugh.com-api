@@ -21,14 +21,23 @@ export const createProject = factory.createHandlers(
       logo: z.string(),
       link: z.string(),
       techStack: z.array(z.string()),
-      type: z.string(),
+      workType: z.string(),
+      category: z.string(),
     }),
   ),
   async (c) => {
     try {
-      const { title, description, link, logo, techStack, type } = c.req.valid("json");
+      const { title, description, link, logo, techStack, category, workType } = c.req.valid("json");
 
-      const res = await ProjectModel.create({ title, description, link, logo, techStack, type });
+      const res = await ProjectModel.create({
+        title,
+        description,
+        link,
+        logo,
+        techStack,
+        category,
+        workType,
+      });
       return c.json(
         {
           message: "Project added successfully",
