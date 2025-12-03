@@ -1,3 +1,4 @@
+import StatusCodes from "@/config/status-codes";
 import { EducationModel } from "@/db/schema/education/education.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
@@ -29,6 +30,10 @@ export const deleteEducationById = factory.createHandlers(
         module: "education",
         action: "education:delete:error",
         error: err instanceof Error ? err.message : String(err),
+      });
+
+      throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
+        message: "Failed to delete project",
       });
     }
   },

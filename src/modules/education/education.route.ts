@@ -17,6 +17,6 @@ educationRoutes.get("/:id", ...getEducationById);
 // delete experience by id
 educationRoutes.delete("/:id", authValidator, ...deleteEducationById);
 //update experiences by id
-educationRoutes.patch("/update/:id", ...updateEducationById);
+educationRoutes.patch("/update/:id", authValidator, ...updateEducationById);
 
 export default educationRoutes;

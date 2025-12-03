@@ -1,3 +1,4 @@
+import StatusCodes from "@/config/status-codes";
 import { BlogsModel } from "@/db/schema/blogs/blogs.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
@@ -37,6 +38,10 @@ export const getBlogById = factory.createHandlers(
         module: "blogs",
         action: "blog:fetch:error",
         error: err instanceof Error ? err.message : String(err),
+      });
+
+      throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
+        message: "Failed to fetch blogs by id",
       });
     }
   },

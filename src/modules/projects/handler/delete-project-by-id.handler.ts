@@ -1,3 +1,4 @@
+import StatusCodes from "@/config/status-codes";
 import { ProjectModel } from "@/db/schema/projects/projects.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
@@ -30,6 +31,10 @@ export const deleteProjectById = factory.createHandlers(
         module: "project",
         action: "project:delete:error",
         error: err instanceof Error ? err.message : String(err),
+      });
+
+      throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
+        message: "Failed to delete project",
       });
     }
   },

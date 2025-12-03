@@ -1,3 +1,4 @@
+import StatusCodes from "@/config/status-codes";
 import { WorkExperienceModel } from "@/db/schema/work/work.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
@@ -37,6 +38,10 @@ export const deleteExperienceById = factory.createHandlers(
         module: "work",
         action: "work:delete:error",
         error: err instanceof Error ? err.message : String(err),
+      });
+
+      throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
+        message: "Failed to delete work exp",
       });
     }
   },

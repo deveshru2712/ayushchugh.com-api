@@ -1,12 +1,12 @@
 import StatusCodes from "@/config/status-codes";
-import { ProjectModel } from "@/db/schema/projects/projects.db";
+import { VolunteerModel } from "@/db/schema/volunteer/volunteer.db";
 import { factory } from "@/lib/factory";
 import { logger } from "@/lib/logger";
 import { customZValidator } from "@/middlewares/custom-z-validator";
 import { HTTPException } from "hono/http-exception";
 import z from "zod";
 
-export const getProjectById = factory.createHandlers(
+export const getVolunteerExpById = factory.createHandlers(
   customZValidator(
     "param",
     z.object({
@@ -16,32 +16,28 @@ export const getProjectById = factory.createHandlers(
   async (c) => {
     try {
       const { id } = c.req.valid("param");
-      const project = await ProjectModel.findById(id);
+      const volunteerExp = await VolunteerModel.findById(id);
 
-      // if projects does not exists
-      if (!project) {
-        throw new HTTPException(404, {
-          message: "project not found",
-        });
-      }
-
-      return c.json({
-        message: "project fetched",
-        project,
-      });
+      return c.json(
+        {
+          message: "Volunteer exp fetched successfully",
+          volunteerExp,
+        },
+        StatusCodes.HTTP_200_OK,
+      );
     } catch (err) {
       if (err instanceof HTTPException) {
         throw err;
       }
 
-      logger.error("Error while fetching project", {
-        module: "project",
-        action: "project:fetch:error",
+      logger.error("Error fetching volunteer exp", {
+        module: "volunteer",
+        action: "volunteer:fetch:error",
         error: err instanceof Error ? err.message : String(err),
       });
 
       throw new HTTPException(StatusCodes.HTTP_500_INTERNAL_SERVER_ERROR, {
-        message: "Failed to fetch project",
+        message: "Failed to fetch volunteer exp",
       });
     }
   },
