@@ -7,7 +7,14 @@ import { HTTPException } from "hono/http-exception";
 import z from "zod";
 
 export const updateExperienceById = factory.createHandlers(
-  customZValidator("param", z.object({ id: z.string() })),
+  customZValidator(
+    "param",
+    z.object({
+      id: z.string(),
+      positionId: z.string(),
+    }),
+  ),
+
   customZValidator(
     "json",
     z
@@ -21,13 +28,12 @@ export const updateExperienceById = factory.createHandlers(
         endDate: z.iso.date().nullable().optional(),
         isCurrent: z.boolean().optional(),
         workType: z.string().optional(),
-        technologies: z.array(z.string()).optional().default([]),
-        responsibilities: z.array(z.string()).optional().default([]),
+        technologies: z.array(z.string()).optional(),
+        responsibilities: z.array(z.string()).optional(),
       })
       .refine(
         (data) => {
-          // Remove fields that are empty, undefined, or default empty arrays
-          const meaningfulFields = [
+          const meaningful = [
             data.company,
             data.logo,
             data.location,
@@ -40,83 +46,65 @@ export const updateExperienceById = factory.createHandlers(
             data.technologies?.length ? data.technologies : null,
             data.responsibilities?.length ? data.responsibilities : null,
           ];
-
-          return meaningfulFields.some((v) => v !== undefined && v !== null);
+          return meaningful.some((v) => v !== undefined && v !== null);
         },
-        {
-          message: "At least one field must be provided to update experience",
-        },
+        { message: "At least one field must be provided to update experience" },
       )
-      .refine(
-        (data) => {
-          // If isCurrent is explicitly set to false, endDate must be provided
-          if (data.isCurrent === false && !data.endDate) {
-            return false;
-          }
-          return true;
-        },
-        {
-          message: "End date must be provided when isCurrent is false",
-        },
-      ),
+      .refine((data) => !(data.isCurrent === false && !data.endDate), {
+        message: "End date must be provided when isCurrent is false",
+      }),
   ),
+
   async (c) => {
     try {
-      const { id } = c.req.valid("param");
-      const {
-        company,
-        logo,
-        location,
-        website,
-        role,
-        startDate,
-        endDate,
-        workType,
-        isCurrent,
-        technologies,
-        responsibilities,
-      } = c.req.valid("json");
+      const { id, positionId } = c.req.valid("param");
+      const updates = c.req.valid("json");
 
       const experience = await WorkExperienceModel.findById(id);
       if (!experience) {
         throw new HTTPException(StatusCodes.HTTP_404_NOT_FOUND, {
-          message: "resource not found",
+          message: "Experience not found",
         });
       }
 
-      const updateFields: any = {};
+      const position = experience.positions.id(positionId);
+      if (!position) {
+        throw new HTTPException(StatusCodes.HTTP_404_NOT_FOUND, {
+          message: `Position with id ${positionId} does not exist`,
+        });
+      }
 
-      // Root level fields
-      if (company) updateFields.company = company;
-      if (logo) updateFields.logo = logo;
-      if (location) updateFields.location = location;
-      if (website) updateFields.website = website;
+      if (updates.company) experience.company = updates.company;
+      if (updates.logo) experience.logo = updates.logo;
+      if (updates.location) experience.location = updates.location;
+      if (updates.website) experience.website = updates.website;
 
-      // Position nested fields
-      if (role) updateFields["position.role"] = role;
-      if (startDate) updateFields["position.startDate"] = new Date(startDate);
-      if (endDate !== undefined)
-        updateFields["position.endDate"] = endDate ? new Date(endDate) : null;
-      if (isCurrent) updateFields["position.endDate"] = null;
-      if (workType) updateFields["position.workType"] = workType;
-      if (technologies) updateFields["position.technologies"] = technologies;
-      if (responsibilities) updateFields["position.responsibilities"] = responsibilities;
+      if (updates.role) position.role = updates.role;
+      if (updates.startDate) position.startDate = new Date(updates.startDate);
 
-      const res = await WorkExperienceModel.findByIdAndUpdate({ _id: id }, updateFields, {
-        new: true,
-      });
+      if (updates.endDate !== undefined) {
+        position.endDate = updates.endDate ? new Date(updates.endDate) : null;
+      }
+
+      if (updates.isCurrent === true) {
+        position.endDate = null;
+      }
+
+      if (updates.workType) position.workType = updates.workType;
+      if (updates.technologies) position.technologies = updates.technologies;
+      if (updates.responsibilities) position.responsibilities = updates.responsibilities;
+
+      const updated = await experience.save();
 
       return c.json(
         {
           message: "Work experience updated successfully",
-          data: res,
+          data: updated,
         },
         StatusCodes.HTTP_200_OK,
       );
     } catch (err) {
-      if (err instanceof HTTPException) {
-        throw err;
-      }
+      if (err instanceof HTTPException) throw err;
 
       logger.error("Error updating work experience", {
         module: "work",

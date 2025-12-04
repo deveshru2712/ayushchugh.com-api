@@ -13,10 +13,14 @@ workExperienceRoutes.post("/create", authValidator, ...addExperience);
 // get all expriences
 workExperienceRoutes.get("/list", ...getAllExperiences);
 // get experience by id
-workExperienceRoutes.get("/:id", ...getExperienceById);
+workExperienceRoutes.get("/:id/position/:positionId", ...getExperienceById);
 // delete experience by id
-workExperienceRoutes.delete("/:id", authValidator, ...deleteExperienceById);
+workExperienceRoutes.delete("/:id/position/:positionId", authValidator, ...deleteExperienceById);
 //update experiences by id
-workExperienceRoutes.patch("/update/:id", authValidator, ...updateExperienceById);
+workExperienceRoutes.patch(
+  "/update/:id/position/:positionId",
+  authValidator,
+  ...updateExperienceById,
+);
 
 export default workExperienceRoutes;
