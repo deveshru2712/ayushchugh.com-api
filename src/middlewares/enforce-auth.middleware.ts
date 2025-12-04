@@ -73,11 +73,14 @@ export const authValidator = createMiddleware(async (c, next) => {
     });
   }
 
+  if (!user.isAdmin) {
+    throw new HTTPException(StatusCodes.HTTP_403_FORBIDDEN, {
+      message: "Admin access required",
+    });
+  }
+
   // Update last accessed time
   await SessionModel.updateOne({ _id: session._id }, { lastAccessedAt: new Date() });
-
-  c.set("user", user);
-  c.set("sessionId", session._id.toString());
 
   await next();
 });

@@ -3,6 +3,7 @@ import type { InferSchemaType } from "mongoose";
 
 const userSchema = new Schema(
   {
+    isAdmin: { type: Boolean, default: false },
     email: {
       type: String,
       required: true,
